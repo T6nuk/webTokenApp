@@ -1,0 +1,70 @@
+<%- include('partials/head') %>
+
+
+
+    <title>Login peidš</title>
+</head>
+<body>
+
+
+    <h1>The much feared login area</h1>
+
+    <form>
+        <label for="email">Email</label>
+        <input type="text" name="email">
+        <div class="email-error" style="color: red;" ></div>
+
+        <label for="password">Password</label>
+        <input type="password" name="password">
+        <div class="pwd-error" style="color: red;" ></div>
+
+        <button style="margin-top:5px;" type="submit">Log in, dude!</button>
+
+    </form>
+
+    <script>
+        const form = document.querySelector('form');
+
+        
+        
+
+        form.addEventListener('submit', async(e) => { //async kui peame ootama
+            e.preventDefault(); //kui tuleb submit käsk, tühista see vaikimise ('ära lae uuesti');
+            //user data from the form
+            const userEmail = form.email.value;
+            const userPassword = form.password.value;
+
+            try {
+                const serverResponse = await fetch('/login', 
+                {
+                    method: 'POST',
+                    body: JSON.stringify({email: userEmail, password: userPassword}), //objekt
+                    headers: {'Content-Type': 'application/json'}
+                });
+                
+                const result = await serverResponse.json();
+                console.log(result);
+
+                if(result.errors) {
+                    document.querySelector('.email-error').textContent = result.errors.email;
+                    
+                }
+
+                if(result.errors) {
+                    document.querySelector('.pwd-error').textContent = result.errors.password;
+                    
+                }
+
+                if(result.user){
+                    location.assign('/');
+                }
+
+            } catch (e) {
+                console.log(e);
+            }
+        }) 
+
+
+    </script>
+
+<%- include('partials/footer') %>
